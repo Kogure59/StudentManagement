@@ -14,14 +14,23 @@ java {
 	}
 }
 
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
 repositories {
 	mavenCentral()
 }
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	// 便利機能、ユーティリティ Apache Commons Lang
+	// 便利機能、ユーティリティ
 	implementation 'org.apache.commons:commons-lang3:3.18.0'
+	//Lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
 
 	// MySQLドライバ
 	runtimeOnly 'com.mysql:mysql-connector-j'
