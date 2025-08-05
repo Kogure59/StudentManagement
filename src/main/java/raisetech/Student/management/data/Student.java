@@ -1,4 +1,4 @@
-package raisetech.Student.management;
+package raisetech.Student.management.data;
 
 import lombok.Getter;
 import lombok.Setter;
