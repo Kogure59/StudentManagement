@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.Student.management.domain.StudentDetail;
+import raisetech.Student.management.exception.TestException;
 import raisetech.Student.management.service.StudentService;
 
 /**
@@ -73,5 +74,11 @@ public class StudentController {
   public ResponseEntity<String> updateStudent(@RequestBody @Valid StudentDetail studentDetail) {
     service.updateStudent(studentDetail);
     return ResponseEntity.ok("更新処理が成功しました。");
+  }
+
+  // 例外を投げるメソッド
+  @GetMapping("/testException")
+  public String throwTestException() throws TestException {
+    throw new TestException("強制的に例外を発生させました。");
   }
 }
