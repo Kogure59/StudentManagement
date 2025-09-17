@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 public class Student {
 
-  @Schema(description = "受講生ID (登録時は自動採番)", accessMode = Schema.AccessMode.READ_ONLY, example = "1")
+  @Schema(description = "受講生ID (登録時は自動採番)", example = "1")
   @Pattern(regexp = "^\\d+$")
   private String id;
 
