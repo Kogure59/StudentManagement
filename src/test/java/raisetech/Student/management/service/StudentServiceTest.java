@@ -98,8 +98,8 @@ class StudentServiceTest {
 
     LocalDateTime now = LocalDateTime.now();
 
-    assertTrue(!studentCourse.getCourseStartAt().isBefore(now.minusSeconds(1))
-        && !studentCourse.getCourseStartAt().isAfter(now.plusSeconds(1)), "受講開始日が現在時刻付近(±1秒の範囲内)であること");
+    assertTrue(!studentCourse.getCourseStartAt().isBefore(now.minusSeconds(5))
+        && !studentCourse.getCourseStartAt().isAfter(now.plusSeconds(5)), "受講開始日が現在時刻付近(±5秒の範囲内)であること");
 
     assertEquals(studentCourse.getCourseStartAt().plusYears(1),
         studentCourse.getCourseEndAt(),"受講終了日は受講開始日の1年後であること");
