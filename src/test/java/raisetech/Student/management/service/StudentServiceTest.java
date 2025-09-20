@@ -1,5 +1,8 @@
 package raisetech.Student.management.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -7,7 +10,6 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -64,8 +66,8 @@ class StudentServiceTest {
     verify(repository, times(1)).searchStudent("123");
     verify(repository, times(1)).searchStudentCourse("123");
 
-    Assertions.assertEquals(expected.getStudent(), result.getStudent());
-    Assertions.assertEquals(expected.getStudentCourseList(), result.getStudentCourseList());
+    assertEquals(expected.getStudent(), result.getStudent());
+    assertEquals(expected.getStudentCourseList(), result.getStudentCourseList());
   }
 
   @Test
@@ -81,7 +83,7 @@ class StudentServiceTest {
     verify(repository, times(1)).registerStudent(student);
     verify(repository, times(1)).registerStudentCourse(studentCourse);
 
-    Assertions.assertSame(input, result);
+    assertSame(input, result);
   }
 
   @Test
@@ -92,14 +94,14 @@ class StudentServiceTest {
 
     sut.initStudentsCourse(studentCourse, student);
 
-    Assertions.assertEquals("123", studentCourse.getStudentId());
+    assertEquals("123", studentCourse.getStudentId());
 
     LocalDateTime now = LocalDateTime.now();
 
-    Assertions.assertTrue(!studentCourse.getCourseStartAt().isBefore(now.minusSeconds(1))
+    assertTrue(!studentCourse.getCourseStartAt().isBefore(now.minusSeconds(1))
         && !studentCourse.getCourseStartAt().isAfter(now.plusSeconds(1)), "受講開始日が現在時刻付近(±1秒の範囲内)であること");
 
-    Assertions.assertEquals(studentCourse.getCourseStartAt().plusYears(1),
+    assertEquals(studentCourse.getCourseStartAt().plusYears(1),
         studentCourse.getCourseEndAt(),"受講終了日は受講開始日の1年後であること");
   }
 
