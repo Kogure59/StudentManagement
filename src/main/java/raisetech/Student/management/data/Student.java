@@ -14,7 +14,7 @@ import lombok.Setter;
 public class Student {
 
   @Schema(description = "受講生ID (登録時は自動採番)", example = "1")
-  @Pattern(regexp = "^\\d+$", message = "数字のみ入力するようにしてください。")
+  @Pattern(regexp = "^\\d+$", message = "数字のみ入力するようにしてください")
   private String id;
 
   @Schema(description = "氏名", example = "山田太郎")
