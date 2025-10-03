@@ -1,4 +1,4 @@
-package raisetech.Student.management.service;
+package raisetech.student.management.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -15,11 +15,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import raisetech.Student.management.controller.converter.StudentConverter;
-import raisetech.Student.management.data.Student;
-import raisetech.Student.management.data.StudentCourse;
-import raisetech.Student.management.domain.StudentDetail;
-import raisetech.Student.management.repository.StudentRepository;
+import raisetech.student.management.controller.converter.StudentConverter;
+import raisetech.student.management.data.Student;
+import raisetech.student.management.data.StudentCourse;
+import raisetech.student.management.domain.StudentDetail;
+import raisetech.student.management.repository.StudentRepository;
 
 @ExtendWith(MockitoExtension.class)
 class StudentServiceTest {

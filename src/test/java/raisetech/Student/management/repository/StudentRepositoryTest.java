@@ -1,4 +1,4 @@
-package raisetech.Student.management.repository;
+package raisetech.student.management.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -7,8 +7,8 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import raisetech.Student.management.data.Student;
-import raisetech.Student.management.data.StudentCourse;
+import raisetech.student.management.data.Student;
+import raisetech.student.management.data.StudentCourse;
 
 @MybatisTest
 class StudentRepositoryTest {
@@ -143,11 +143,12 @@ class StudentRepositoryTest {
   }
 
   private static StudentCourse exampleStudentCourse(Student student) {
+    LocalDateTime localDateTime = LocalDateTime.of(2024, 1, 1, 0, 0);
     StudentCourse studentCourse = new StudentCourse();
     studentCourse.setStudentId(student.getId());
     studentCourse.setCourseName("Javaコース");
-    studentCourse.setCourseStartAt(LocalDateTime.now());
-    studentCourse.setCourseEndAt(LocalDateTime.now().plusYears(1));
+    studentCourse.setCourseStartAt(localDateTime);
+    studentCourse.setCourseEndAt(localDateTime.plusYears(1));
     return studentCourse;
   }
 }
