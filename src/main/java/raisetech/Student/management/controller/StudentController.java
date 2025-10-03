@@ -1,4 +1,4 @@
-package raisetech.Student.management.controller;
+package raisetech.student.management.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import raisetech.Student.management.domain.StudentDetail;
-import raisetech.Student.management.service.StudentService;
+import raisetech.student.management.domain.StudentDetail;
+import raisetech.student.management.service.StudentService;
 
 /**
  * 受講生の検索や登録、更新などを行うREST APIとして受け付けるController

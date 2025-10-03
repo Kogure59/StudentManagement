@@ -1,4 +1,4 @@
-package raisetech.Student.management.controller.converter;
+package raisetech.student.management.controller.converter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -6,9 +6,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import raisetech.Student.management.data.Student;
-import raisetech.Student.management.data.StudentCourse;
-import raisetech.Student.management.domain.StudentDetail;
+import raisetech.student.management.data.Student;
+import raisetech.student.management.data.StudentCourse;
+import raisetech.student.management.domain.StudentDetail;
 
 class StudentConverterTest {
 

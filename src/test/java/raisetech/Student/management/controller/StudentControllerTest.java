@@ -1,4 +1,4 @@
-package raisetech.Student.management.controller;
+package raisetech.student.management.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -18,9 +18,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import raisetech.Student.management.data.Student;
-import raisetech.Student.management.data.StudentCourse;
-import raisetech.Student.management.service.StudentService;
+import raisetech.student.management.data.Student;
+import raisetech.student.management.data.StudentCourse;
+import raisetech.student.management.service.StudentService;
 
 @WebMvcTest(StudentController.class)
 class StudentControllerTest {
