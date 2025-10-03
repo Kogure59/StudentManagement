@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS students
     age INT,
     gender VARCHAR(10),
     remark TEXT,
-    is_deleted boolean
+    is_deleted boolean NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS students_courses

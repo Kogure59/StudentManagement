@@ -16,14 +16,16 @@ class StudentRepositoryTest {
   @Autowired
   private StudentRepository sut;
 
+  // 受講生の全件検索が行えること
   @Test
-  void 受講生の全件検索が行えること() {
+  void searchStudentList_whenCalled_returnsAllStudents() {
     List<Student> actual = sut.search();
     assertThat(actual.size()).isEqualTo(5);
   }
 
+  // 受講生の検索が行えること
   @Test
-  void 受講生の検索が行えること() {
+  void searchStudent_givenId_returnsCorrectStudent() {
     String id = "1";
 
     Student actual = sut.searchStudent(id);
@@ -31,15 +33,17 @@ class StudentRepositoryTest {
     assertThat(actual.getId()).isEqualTo(id);
   }
 
+  // 受講生のコース情報の全件検索が行えること
   @Test
-  void 受講生のコース情報の全件検索が行えること() {
+  void searchStudentCourseList_whenCalled_returnsAllCourses() {
     List<StudentCourse> actual = sut.searchStudentCourseList();
 
     assertThat(actual.size()).isEqualTo(6);
   }
 
+  // 受講生IDに紐づく受講生コース情報の検索が行えること
   @Test
-  void 受講生IDに紐づく受講生コース情報の検索が行えること() {
+  void searchStudentCourse_givenStudentId_returnsCorrectCourses() {
     String studentId = "2";
 
     List<StudentCourse> actual = sut.searchStudentCourse(studentId);
@@ -47,8 +51,9 @@ class StudentRepositoryTest {
     assertThat(actual.size()).isEqualTo(2);
   }
 
+  // 受講生の登録が行えること
   @Test
-  void 受講生の登録が行えること() {
+  void registerStudent_whenNewStudentProvided_increasesStudentCount() {
     Student student = exampleStudent();
 
     sut.registerStudent(student);
@@ -58,8 +63,9 @@ class StudentRepositoryTest {
     assertThat(actual.size()).isEqualTo(6);
   }
 
+  // 受講生コース情報の登録が行えること
   @Test
-  void 受講生コース情報の登録が行えること() {
+  void registerStudentCourse_whenNewCourseProvided_increasesCourseCount() {
     Student student = exampleStudent();
     sut.registerStudent(student);
 
@@ -72,8 +78,9 @@ class StudentRepositoryTest {
     assertThat(actual.size()).isEqualTo(7);
   }
 
+  // 受講生の更新が行えること
   @Test
-  void 受講生の更新が行えること() {
+  void updateStudent_whenStudentUpdated_updatesStudentInfo() {
     Student student = exampleStudent();
     sut.registerStudent(student);
 
@@ -110,8 +117,9 @@ class StudentRepositoryTest {
     assertThat(actual.isDeleted()).isTrue();
   }
 
+  // 受講生コース情報の更新が行えること
   @Test
-  void 受講生コース情報の更新が行えること() {
+  void updateStudentCourse_whenCourseUpdated_updatesCourseInfo() {
     Student student = exampleStudent();
     sut.registerStudent(student);
 
