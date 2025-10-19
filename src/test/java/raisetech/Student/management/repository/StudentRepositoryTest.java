@@ -23,6 +23,29 @@ class StudentRepositoryTest {
     assertThat(actual.size()).isEqualTo(5);
   }
 
+  // 受講生の条件検索が行えること(例:名前で検索)
+  @Test
+  void searchStudentByCondition_givenName_returnsMatchingStudents() {
+    String name = "山田太郎";
+
+    List<Student> actual = sut.searchStudentByCondition(
+        name, null, null, null, null, null, null, null, null
+    );
+
+    assertThat(actual.size()).isEqualTo(1);
+    assertThat(actual.get(0).getName()).isEqualTo(name);
+  }
+
+  // 受講生の条件検索が行えること(条件指定なし = 全件取得相当)
+  @Test
+  void searchStudentByCondition_givenNoCondition_returnsAllStudents() {
+    List<Student> actual = sut.searchStudentByCondition(
+        null, null, null, null, null, null, null, null, null
+    );
+
+    assertThat(actual).hasSize(5);
+  }
+
   // 受講生の検索が行えること
   @Test
   void searchStudent_givenId_returnsCorrectStudent() {
@@ -37,6 +60,29 @@ class StudentRepositoryTest {
   @Test
   void searchStudentCourseList_whenCalled_returnsAllCourses() {
     List<StudentCourse> actual = sut.searchStudentCourseList();
+
+    assertThat(actual.size()).isEqualTo(6);
+  }
+
+  // 受講生のコース情報の条件検索が行えること(例:コース名で検索)
+  @Test
+  void searchStudentCourseByCondition_givenCourseName_returnsMatchingCourses() {
+    String courseName = "Javaコース";
+
+    List<StudentCourse> actual = sut.searchStudentCourseByCondition(
+        courseName, null, null
+    );
+
+    assertThat(actual).isNotEmpty();
+    assertThat(actual).allMatch(course -> course.getCourseName().contains(courseName));
+  }
+
+  // 受講生のコース情報の条件検索が行えること(条件指定なし = 全件取得相当)
+  @Test
+  void searchStudentCourseByCondition_givenNoCondition_returnsAllCourses() {
+    List<StudentCourse> actual = sut.searchStudentCourseByCondition(
+        null, null, null
+    );
 
     assertThat(actual.size()).isEqualTo(6);
   }
