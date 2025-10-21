@@ -2,6 +2,7 @@ package raisetech.student.management.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -85,6 +86,37 @@ class StudentRepositoryTest {
     );
 
     assertThat(actual.size()).isEqualTo(6);
+  }
+
+  // course_start_at >= 2025-10-01 の条件で検索すると10月以降のコースのみ取得できること
+  @Test
+  void shouldReturnCoursesStartingAfterGivenDate() {
+    LocalDate startAt = LocalDate.of(2025, 10, 1);
+
+    List<StudentCourse> result = sut.searchStudentCourseByCondition(null, startAt, null);
+
+    assertThat(result.size()).isEqualTo(2);
+  }
+
+  // course_end_at <= 2025-10-30 の条件で検索すると10月以前に終了するコースのみ取得できること
+  @Test
+  void shouldReturnCoursesEndingBeforeGivenDate() {
+    LocalDate endAt = LocalDate.of(2025, 10, 30);
+
+    List<StudentCourse> result = sut.searchStudentCourseByCondition(null, null, endAt);
+
+    assertThat(result.size()).isEqualTo(4);
+  }
+
+  // course_start_at >= 2025-09-01 かつ course_end_at <= 2025-10-01 の条件で検索すると特定のコースのみ取得できること
+  @Test
+  void shouldReturnCoursesWithinGivenDateRange() {
+    LocalDate startAt = LocalDate.of(2025, 9, 1);
+    LocalDate endAt = LocalDate.of(2025, 10, 1);
+
+    List<StudentCourse> result = sut.searchStudentCourseByCondition(null, startAt, endAt);
+
+    assertThat(result.size()).isEqualTo(1);
   }
 
   // 受講生IDに紐づく受講生コース情報の検索が行えること
