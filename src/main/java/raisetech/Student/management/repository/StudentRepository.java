@@ -1,5 +1,6 @@
 package raisetech.student.management.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import raisetech.student.management.data.Student;
@@ -19,6 +20,32 @@ public interface StudentRepository {
   List<Student> search();
 
   /**
+   * 受講生の条件検索を行う。
+   *
+   * @param name 名前
+   * @param kanaName カナ名
+   * @param nickname ニックネーム
+   * @param email メールアドレス
+   * @param area 地域
+   * @param age 年齢
+   * @param gender 性別
+   * @param remark 備考
+   * @param isDeleted 論理削除フラグ
+   * @return 受講生一覧
+   */
+  List<Student> searchStudentByCondition(
+      String name,
+      String kanaName,
+      String nickname,
+      String email,
+      String area,
+      Integer age,
+      String gender,
+      String remark,
+      Boolean isDeleted
+  );
+
+  /**
    * 受講生の検索を行う。
    *
    * @param id 受講生ID
@@ -32,6 +59,20 @@ public interface StudentRepository {
    * @return 受講生コース情報(全件)
    */
   List<StudentCourse> searchStudentCourseList();
+
+  /**
+   * 受講生のコース情報の条件検索を行う。
+   *
+   * @param courseName 受講生コース名
+   * @param courseStartAt 受講開始日(yyyy-MM-dd)
+   * @param courseEndAt 受講終了日(yyyy-MM-dd)
+   * @return 受講生コース情報一覧
+   */
+  List<StudentCourse> searchStudentCourseByCondition(
+      String courseName,
+      LocalDate courseStartAt,
+      LocalDate courseEndAt
+  );
 
   /**
    * 受講生IDに紐づく受講生コース情報を検索する。

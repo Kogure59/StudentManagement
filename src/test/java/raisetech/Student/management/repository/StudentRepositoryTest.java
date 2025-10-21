@@ -2,6 +2,7 @@ package raisetech.student.management.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,29 @@ class StudentRepositoryTest {
     assertThat(actual.size()).isEqualTo(5);
   }
 
+  // 受講生の条件検索が行えること(例:名前で検索)
+  @Test
+  void searchStudentByCondition_givenName_returnsMatchingStudents() {
+    String name = "山田太郎";
+
+    List<Student> actual = sut.searchStudentByCondition(
+        name, null, null, null, null, null, null, null, null
+    );
+
+    assertThat(actual.size()).isEqualTo(1);
+    assertThat(actual.get(0).getName()).isEqualTo(name);
+  }
+
+  // 受講生の条件検索が行えること(条件指定なし = 全件取得相当)
+  @Test
+  void searchStudentByCondition_givenNoCondition_returnsAllStudents() {
+    List<Student> actual = sut.searchStudentByCondition(
+        null, null, null, null, null, null, null, null, null
+    );
+
+    assertThat(actual).hasSize(5);
+  }
+
   // 受講生の検索が行えること
   @Test
   void searchStudent_givenId_returnsCorrectStudent() {
@@ -39,6 +63,60 @@ class StudentRepositoryTest {
     List<StudentCourse> actual = sut.searchStudentCourseList();
 
     assertThat(actual.size()).isEqualTo(6);
+  }
+
+  // 受講生のコース情報の条件検索が行えること(例:コース名で検索)
+  @Test
+  void searchStudentCourseByCondition_givenCourseName_returnsMatchingCourses() {
+    String courseName = "Javaコース";
+
+    List<StudentCourse> actual = sut.searchStudentCourseByCondition(
+        courseName, null, null
+    );
+
+    assertThat(actual).isNotEmpty();
+    assertThat(actual).allMatch(course -> course.getCourseName().contains(courseName));
+  }
+
+  // 受講生のコース情報の条件検索が行えること(条件指定なし = 全件取得相当)
+  @Test
+  void searchStudentCourseByCondition_givenNoCondition_returnsAllCourses() {
+    List<StudentCourse> actual = sut.searchStudentCourseByCondition(
+        null, null, null
+    );
+
+    assertThat(actual.size()).isEqualTo(6);
+  }
+
+  // course_start_at >= 2025-10-01 の条件で検索すると10月以降のコースのみ取得できること
+  @Test
+  void shouldReturnCoursesStartingAfterGivenDate() {
+    LocalDate startAt = LocalDate.of(2025, 10, 1);
+
+    List<StudentCourse> result = sut.searchStudentCourseByCondition(null, startAt, null);
+
+    assertThat(result.size()).isEqualTo(2);
+  }
+
+  // course_end_at <= 2025-10-30 の条件で検索すると10月以前に終了するコースのみ取得できること
+  @Test
+  void shouldReturnCoursesEndingBeforeGivenDate() {
+    LocalDate endAt = LocalDate.of(2025, 10, 30);
+
+    List<StudentCourse> result = sut.searchStudentCourseByCondition(null, null, endAt);
+
+    assertThat(result.size()).isEqualTo(4);
+  }
+
+  // course_start_at >= 2025-09-01 かつ course_end_at <= 2025-10-01 の条件で検索すると特定のコースのみ取得できること
+  @Test
+  void shouldReturnCoursesWithinGivenDateRange() {
+    LocalDate startAt = LocalDate.of(2025, 9, 1);
+    LocalDate endAt = LocalDate.of(2025, 10, 1);
+
+    List<StudentCourse> result = sut.searchStudentCourseByCondition(null, startAt, endAt);
+
+    assertThat(result.size()).isEqualTo(1);
   }
 
   // 受講生IDに紐づく受講生コース情報の検索が行えること

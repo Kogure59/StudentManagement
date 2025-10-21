@@ -7,6 +7,23 @@
     SELECT * FROM students
   </select>
 
+  <!-- 受講生の条件検索 -->
+  <select id="searchStudentByCondition" resultType="raisetech.student.management.data.Student">
+    SELECT * FROM students
+    <where>
+      <if test="name != null and name != ''">AND name LIKE CONCAT('%', #{name}, '%')</if>
+      <if test="kanaName != null and kanaName != ''">AND kana_name LIKE CONCAT('%', #{kanaName}, '%')</if>
+      <if test="nickname != null and nickname != ''">AND nickname LIKE CONCAT('%', #{nickname}, '%')</if>
+      <if test="email != null and email != ''">AND email LIKE CONCAT('%', #{email}, '%')</if>
+      <if test="area != null and area != ''">AND area = #{area}</if>
+      <if test="age != null">AND age = #{age}</if>
+      <if test="gender != null and gender != ''">AND gender = #{gender}</if>
+      <if test="remark != null and remark != ''">AND remark LIKE CONCAT('%', #{remark}, '%')</if>
+      <if test="isDeleted != null">AND is_deleted = #{isDeleted}</if>
+    </where>
+    ORDER BY id
+  </select>
+
   <!-- 受講生の検索 -->
   <select id="searchStudent" resultType="raisetech.student.management.data.Student">
     SELECT * FROM students WHERE id = #{id}
@@ -15,6 +32,16 @@
   <!-- 受講生コース情報の全件検索 -->
   <select id="searchStudentCourseList" resultType="raisetech.student.management.data.StudentCourse">
     SELECT * FROM students_courses
+  </select>
+
+  <!-- 受講生コースの条件検索 -->
+  <select id="searchStudentCourseByCondition" resultType="raisetech.student.management.data.StudentCourse">
+    SELECT * FROM students_courses
+    <where>
+      <if test="courseName != null and courseName != ''">AND course_name LIKE CONCAT('%', #{courseName}, '%')</if>
+      <if test="courseStartAt != null">AND course_start_at <![CDATA[ >= ]]> #{courseStartAt}</if>
+      <if test="courseEndAt != null">AND course_end_at <![CDATA[ <= ]]> #{courseEndAt}</if>
+    </where>
   </select>
 
   <!-- 受講生IDに紐づく受講生コース情報の検索 -->
