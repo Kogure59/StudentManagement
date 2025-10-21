@@ -5,9 +5,12 @@ import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import java.time.LocalDate;
 import java.util.List;
 import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -35,6 +38,11 @@ public class StudentController {
     this.service = service;
   }
 
+  // 空文字もnull相当として扱う
+  private boolean isEmpty(String s){
+    return s == null || s.trim().isEmpty();
+  }
+
   /**
    * 受講生詳細の条件指定検索。条件指定を行わない場合は、全件検索を行う。
    *
@@ -53,10 +61,14 @@ public class StudentController {
       @RequestParam(required = false) String remark,
       @RequestParam(required = false) Boolean isDeleted,
       @RequestParam(required = false) String courseName,
-      @RequestParam(required = false) String courseStartAt,
-      @RequestParam(required = false) String courseEndAt
+      @DateTimeFormat(iso = ISO.DATE)
+      @RequestParam(required = false) LocalDate courseStartAt,
+      @DateTimeFormat(iso = ISO.DATE)
+      @RequestParam(required = false) LocalDate courseEndAt
   ) {
-    if (name == null && kanaName == null && nickname == null && email == null && area == null && age == null && gender == null && remark == null && isDeleted == null && courseName == null && courseStartAt == null && courseEndAt == null) {
+    if (isEmpty(name) && isEmpty(kanaName) && isEmpty(nickname) && isEmpty(email) && isEmpty(area)
+        && age == null && isEmpty(gender) && isEmpty(remark) && isDeleted == null
+        && isEmpty(courseName) && courseStartAt == null && courseEndAt == null) {
       return service.searchStudentList();
     }
     return service.searchStudentListByCondition(name, kanaName, nickname, email, area, age, gender, remark, isDeleted, courseName, courseStartAt, courseEndAt);

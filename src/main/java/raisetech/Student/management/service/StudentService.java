@@ -1,6 +1,8 @@
 package raisetech.student.management.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -69,8 +71,8 @@ public class StudentService {
       String remark,
       Boolean isDeleted,
       String courseName,
-      String courseStartAt,
-      String courseEndAt
+      LocalDate courseStartAt,
+      LocalDate courseEndAt
   ) {
     // Studentの条件に合致する受講生一覧
     List<Student> matchedStudent = repository.searchStudentByCondition(name, kanaName, nickname, email,
@@ -78,18 +80,27 @@ public class StudentService {
     // 受講生コーステーブルの全件
     List<StudentCourse> studentCourseList = repository.searchStudentCourseList();
 
+    // コース条件が実際に指定されたかを判定するフラグ
+    boolean isCourseConditionSpecified =
+        (courseName != null && !courseName.isEmpty()) || (courseStartAt != null || (courseEndAt != null));
+
     // コース条件に合致するコースを持つ受講生のIDをセット
     Set<String> matchedStudentId = repository.searchStudentCourseByCondition(courseName, courseStartAt, courseEndAt)
         .stream()
         .map(StudentCourse::getStudentId)
         .collect(Collectors.toSet());
 
+    // コース条件指定ありであり、かつ該当なしの場合、空のリストを返す
+    if (isCourseConditionSpecified && matchedStudentId.isEmpty()) {
+      return Collections.emptyList();
+    }
+
     // Student側の条件に合致する受講生のうち、
     // matchedStudentIdに含まれている受講生を絞り込む
     // matchedStudentIdが空(コース条件が未指定)の場合、全てのstudentを通す(絞り込みなし)
     List<Student> filteredStudent = matchedStudent.stream()
         .filter(student -> matchedStudentId.isEmpty() || matchedStudentId.contains(student.getId()))
-        .toList();
+        .collect(Collectors.toList());
 
     // 絞り込んだ受講生と、その受講生に紐づく全てのコース情報を渡す
     return converter.convertStudentDetails(filteredStudent, studentCourseList);

@@ -39,8 +39,8 @@
     SELECT * FROM students_courses
     <where>
       <if test="courseName != null and courseName != ''">AND course_name LIKE CONCAT('%', #{courseName}, '%')</if>
-      <if test="courseStartAt != null and courseStartAt != ''">AND course_start_at &gt;= #{courseStartAt}</if>
-      <if test="courseEndAt != null and courseEndAt != ''">AND course_end_at &lt;= #{courseEndAt}</if>
+      <if test="courseStartAt != null">AND course_start_at <![CDATA[ >= ]]> #{courseStartAt}</if>
+      <if test="courseEndAt != null">AND course_end_at <![CDATA[ <= ]]> #{courseEndAt}</if>
     </where>
   </select>
 

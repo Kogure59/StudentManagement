@@ -1,10 +1,10 @@
 package raisetech.student.management.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
-import raisetech.student.management.domain.StudentDetail;
 
 /**
  * 受講生テーブルと受講生コース情報テーブルと紐づくRepository
@@ -64,14 +64,14 @@ public interface StudentRepository {
    * 受講生のコース情報の条件検索を行う。
    *
    * @param courseName 受講生コース名
-   * @param courseStartAt 受講開始日(yyyy-MM-ddTHH:mm:ss)
-   * @param courseEndAt 受講終了日(yyyy-MM-ddTHH:mm:ss)
+   * @param courseStartAt 受講開始日(yyyy-MM-dd)
+   * @param courseEndAt 受講終了日(yyyy-MM-dd)
    * @return 受講生コース情報一覧
    */
   List<StudentCourse> searchStudentCourseByCondition(
       String courseName,
-      String courseStartAt,
-      String courseEndAt
+      LocalDate courseStartAt,
+      LocalDate courseEndAt
   );
 
   /**

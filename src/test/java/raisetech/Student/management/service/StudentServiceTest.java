@@ -1,5 +1,6 @@
 package raisetech.student.management.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -10,6 +11,7 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -127,6 +129,18 @@ class StudentServiceTest {
     verify(repository, times(1)).searchStudentCourseByCondition(null, null, null);
     verify(converter, times(1)).convertStudentDetails(students, allCourses);
     assertSame(expected, actual);
+  }
+
+  // コース条件が指定されているが該当なしの時、空のリストを返すこと
+  @Test
+  void shouldReturnEmptyList_whenCourseConditionSpecifiedButNoMatch() {
+    String courseName = "存在しないコース";
+
+    List<StudentDetail> result = sut.searchStudentListByCondition(
+        null, null, null, null, null, null, null, null, null,
+        courseName, null, null);
+
+    assertThat(result).isEmpty();
   }
 
   // 受講生詳細検索で、Repositoryの呼び出しと戻り値が正しいこと
