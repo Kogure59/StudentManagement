@@ -33,17 +33,37 @@ class StudentControllerTest {
 
   private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
+  // 受講生詳細の条件指定なしで一覧検索が実行できること
   @Test
-  void 受講生詳細の一覧検索が実行できて空のリストが返ってくること() throws Exception {
+  void getStudentList_withoutConditions_executesSuccessfully() throws Exception {
     mockMvc.perform(get("/studentList"))
         .andExpect(status().isOk())
         .andExpect(content().json("[]"));
 
     verify(service, times(1)).searchStudentList();
+    verify(service, times(0)).searchStudentListByCondition(
+        null, null, null, null, null, null, null, null, null,
+        null, null, null);
   }
 
+  // 受講生詳細の条件指定付きで検索が実行できること
   @Test
-  void 受講生詳細検索が実行できて空で返ってくること() throws Exception {
+  void getStudentList_withConditions_executesSuccessfully() throws Exception {
+    mockMvc.perform(get("/studentList")
+            .param("name", "山田太郎")
+            .param("courseName", "Javaコース"))
+        .andExpect(status().isOk())
+        .andExpect(content().json("[]"));
+
+    verify(service, times(0)).searchStudentList();
+    verify(service, times(1)).searchStudentListByCondition(
+        "山田太郎", null, null, null, null, null, null, null, null,
+        "Javaコース", null, null);
+  }
+
+  // 受講生詳細検索が実行できて空で返ってくること
+  @Test
+  void getStudent_returnsEmptySuccessfully() throws Exception {
     String id = "123";
     mockMvc.perform(get("/student/{id}", id))
         .andExpect(status().isOk());
@@ -51,8 +71,9 @@ class StudentControllerTest {
     verify(service, times(1)).searchStudent(id);
   }
 
+  // 受講生詳細の登録が実行できて空で返ってくること
   @Test
-  void 受講生詳細の登録が実行できて空で返ってくること() throws Exception {
+  void registerStudent_returnsEmptySuccessfully() throws Exception {
     String jsonBody = """
         {
             "student": {
@@ -81,8 +102,9 @@ class StudentControllerTest {
     verify(service, times(1)).registerStudent(any());
   }
 
+  // 受講生詳細の更新が実行できて空で返ってくること
   @Test
-  void 受講生詳細の更新が実行できて空で返ってくること() throws Exception {
+  void updateStudent_returnsSuccessMessage() throws Exception {
     String jsonBody = """
         {
             "student": {
@@ -116,15 +138,17 @@ class StudentControllerTest {
     verify(service, times(1)).updateStudent(any());
   }
 
+  // 受講生詳細の例外APIが実行できてステータスが400で返ってくること
   @Test
-  void 受講生詳細の例外APIが実行できてステータスが400で返ってくること() throws Exception {
+  void throwException_returnsBadRequestStatus() throws Exception {
     mockMvc.perform(get("/exception"))
         .andExpect(status().is4xxClientError())
         .andExpect(content().string("このAPIは現在利用できません。古いURLとなっています。"));
   }
 
+  // 受講生詳細の受講生で適切な値を入力した時に入力チェックに異常が発生しないこと
   @Test
-  void 受講生詳細の受講生で適切な値を入力した時に入力チェックに異常が発生しないこと() {
+  void validateStudent_withValidValues_noValidationErrors() {
     Student student = new Student();
     student.setId("1");
     student.setName("江並公史");
@@ -139,8 +163,9 @@ class StudentControllerTest {
     assertThat(violations.size()).isEqualTo(0);
   }
 
+  // 受講生詳細の受講生でIDに数字以外を用いた時に入力チェックに掛かること
   @Test
-  void 受講生詳細の受講生でIDに数字以外を用いた時に入力チェックに掛かること() {
+  void validateStudent_withNonNumericId_triggersValidationError() {
     Student student = new Student();
     student.setId("テストです。");
     student.setName("江並公史");
@@ -156,8 +181,9 @@ class StudentControllerTest {
     assertThat(violations).extracting("message").contains("数字のみ入力するようにしてください");
   }
 
+  // 受講生詳細の受講生で値を空にしたときに入力チェックに掛かること
   @Test
-  void 受講生詳細の受講生で値を空にしたときに入力チェックに掛かること() {
+  void validateStudent_withEmptyValues_triggersValidationErrors() {
     Student student = new Student();
     student.setId("1");
     student.setName("");
@@ -174,8 +200,9 @@ class StudentControllerTest {
   }
 
 
+  // 受講生詳細の受講生コース情報で適切な値を入力した時に入力チェックに異常が発生しないこと
   @Test
-  void 受講生詳細の受講生コース情報で適切な値を入力した時に入力チェックに異常が発生しないこと() {
+  void validateStudentCourse_withValidValues_noValidationErrors() {
     StudentCourse studentCourse = new StudentCourse();
     studentCourse.setId("1");
     studentCourse.setStudentId("1");
@@ -186,8 +213,9 @@ class StudentControllerTest {
     assertThat(violations.size()).isEqualTo(0);
   }
 
+  // 受講生詳細の受講生コース情報でIDに数字以外を用いた時に入力チェックに掛かること
   @Test
-  void 受講生詳細の受講生コース情報でIDに数字以外を用いた時に入力チェックに掛かること() {
+  void validateStudentCourse_withNonNumericIds_triggersValidationErrors() {
     StudentCourse studentCourse = new StudentCourse();
     studentCourse.setId("テストです。");
     studentCourse.setStudentId("テストです。");
@@ -199,8 +227,9 @@ class StudentControllerTest {
     assertThat(violations).extracting("message").contains("数字のみ入力するようにしてください");
   }
 
+  // 受講生詳細の受講生コース情報で値を空にしたときに入力チェックに掛かること
   @Test
-  void 受講生詳細の受講生コース情報で値を空にしたときに入力チェックに掛かること() {
+  void validateStudentCourse_withEmptyValues_triggersValidationError() {
     StudentCourse studentCourse = new StudentCourse();
     studentCourse.setId("1");
     studentCourse.setStudentId("1");
