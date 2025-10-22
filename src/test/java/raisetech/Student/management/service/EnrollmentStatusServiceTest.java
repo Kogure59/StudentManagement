@@ -1,6 +1,5 @@
 package raisetech.student.management.service;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -32,8 +31,9 @@ class EnrollmentStatusServiceTest {
     sut = new EnrollmentStatusService(repository);
   }
 
+  // 申込状況の全件検索_リポジトリの呼び出しが行われること
   @Test
-  void 申込状況の全件検索_リポジトリの呼び出しが行われること() {
+  void searchAllStatuses_whenCalled_thenRepositoryIsInvoked() {
     List<EnrollmentStatus> statusList = new ArrayList<>();
     when(repository.searchAll()).thenReturn(statusList);
 
@@ -42,8 +42,9 @@ class EnrollmentStatusServiceTest {
     verify(repository, times(1)).searchAll();
   }
 
+  // IDによる申込状況の検索_リポジトリの呼び出しが行われること
   @Test
-  void IDによる申込状況の検索_リポジトリの呼び出しが行われること() {
+  void searchStatusById_whenValidIdGiven_thenReturnExpectedStatus() {
     String id = "1";
     EnrollmentStatus enrollmentStatus = new EnrollmentStatus();
     when(repository.searchById(id)).thenReturn(enrollmentStatus);
@@ -54,8 +55,9 @@ class EnrollmentStatusServiceTest {
     assertThat(actual).isSameAs(enrollmentStatus);
   }
 
+  // 受講生コースIDによる申込状況の検索_リポジトリの呼び出しが行われること
   @Test
-  void 受講生コースIDによる申込状況の検索_リポジトリの呼び出しが行われること() {
+  void searchStatusByStudentCourseId_whenValidIdGiven_thenReturnExpectedStatus() {
     String studentCourseId = "1";
     EnrollmentStatus enrollmentStatus = new EnrollmentStatus();
     when(repository.searchByStudentCourseId(studentCourseId)).thenReturn(enrollmentStatus);
@@ -66,8 +68,9 @@ class EnrollmentStatusServiceTest {
     assertThat(actual).isSameAs(enrollmentStatus);
   }
 
+  // 初期申込状況の登録_リポジトリの呼び出しが行われること
   @Test
-  void 初期申込状況の登録_リポジトリの呼び出しが行われること() {
+  void registerInitialStatus_whenCalled_thenRepositoryRegistersDefaultStatus() {
     String studentCourseId = "1001";
 
     sut.registerInitialStatus(studentCourseId);
@@ -80,8 +83,9 @@ class EnrollmentStatusServiceTest {
     assertThat(captured.getStatus()).isEqualTo("仮申込");
   }
 
+  // 申込状況の更新_リポジトリの呼び出しが行われること
   @Test
-  void 申込状況の更新_リポジトリの呼び出しが行われること() {
+  void updateStatus_whenCalled_thenRepositoryUpdatesWithStudentCourseId() {
     String studentCourseId = "1001";
     EnrollmentStatus enrollmentStatus = new EnrollmentStatus();
 
@@ -92,8 +96,9 @@ class EnrollmentStatusServiceTest {
     assertThat(enrollmentStatus.getStudentCourseId()).isEqualTo(studentCourseId);
   }
 
+  // 申込状況が存在する場合_本申込に更新_リポジトリの呼び出しが行われること
   @Test
-  void 申込状況が存在する場合_本申込に更新_リポジトリの呼び出しが行われること() {
+  void promoteToFormalEnrollment_whenStatusExists_thenStatusIsUpdatedToFormal() {
     String studentCourseId = "1001";
     EnrollmentStatus existingStatus = new EnrollmentStatus();
     existingStatus.setStudentCourseId(studentCourseId);
@@ -106,8 +111,9 @@ class EnrollmentStatusServiceTest {
     verify(repository, times(1)).updateStatus(existingStatus);
   }
 
+  // 申込状況が存在しない場合_更新処理が呼ばれないこと
   @Test
-  void 申込状況が存在しない場合_更新処理が呼ばれないこと() {
+  void promoteToFormalEnrollment_whenStatusDoesNotExist_thenNoUpdateIsPerformed() {
     String studentCourseId = "1001";
     when(repository.searchByStudentCourseId(studentCourseId)).thenReturn(null);
 

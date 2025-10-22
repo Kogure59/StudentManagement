@@ -16,8 +16,8 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import raisetech.student.management.data.EnrollmentStatus;
 import raisetech.student.management.service.EnrollmentStatusService;
@@ -28,13 +28,14 @@ class EnrollmentStatusControllerTest {
   @Autowired
   MockMvc mockMvc;
 
-  @MockitoBean
+  @MockBean
   private EnrollmentStatusService service;
 
   private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
+  // 申込状況の全件検索が実行できて空のリストが返ってくること
   @Test
-  void 申込状況の全件検索が実行できて空のリストが返ってくること() throws Exception {
+  void getAllStatuses_whenCalled_thenReturnEmptyList() throws Exception {
     mockMvc.perform(get("/enrollmentStatuses"))
         .andExpect(status().isOk())
         .andExpect(content().json("[]"));
@@ -42,8 +43,9 @@ class EnrollmentStatusControllerTest {
     verify(service, times(1)).searchAllStatuses();
   }
 
+  // IDによる申込状況の検索が実行できて結果が返ってくること
   @Test
-  void IDによる申込状況の検索が実行できて結果が返ってくること() throws Exception {
+  void getStatusById_whenValidIdGiven_thenReturnExpectedStatus() throws Exception {
     String id = "1";
     String status = "仮申込";
     EnrollmentStatus enrollmentStatus = new EnrollmentStatus();
@@ -59,8 +61,9 @@ class EnrollmentStatusControllerTest {
     verify(service, times(1)).searchStatusById(id);
   }
 
+  // 受講生コースIDによる申込状況の検索が実行できて結果が返ってくること
   @Test
-  void 受講生コースIDによる申込状況の検索が実行できて結果が返ってくること() throws Exception {
+  void getStatusByStudentCourseId_whenValidIdGiven_thenReturnExpectedStatus() throws Exception {
     String studentCourseId = "1001";
     String status = "仮申込";
     EnrollmentStatus enrollmentStatus = new EnrollmentStatus();
@@ -76,8 +79,9 @@ class EnrollmentStatusControllerTest {
     verify(service, times(1)).searchStatusByStudentCourseId(studentCourseId);
   }
 
+  // 初期申込登録が実行できること
   @Test
-  void 初期申込登録が実行できること() throws Exception {
+  void registerInitial_whenCalled_thenServiceMethodIsExecuted() throws Exception {
     String studentCourseId = "1001";
     mockMvc.perform(post("/studentCourses/{studentCourseId}/enrollmentStatus/initial", studentCourseId))
            .andExpect(status().isOk());
@@ -85,8 +89,9 @@ class EnrollmentStatusControllerTest {
     verify(service, times(1)).registerInitialStatus(studentCourseId);
   }
 
+  // 申込状況の更新が実行できること
   @Test
-  void 申込状況の更新が実行できること() throws Exception {
+  void updateStatus_whenValidRequestGiven_thenUpdateIsPerformed() throws Exception {
     String studentCourseId ="1001";
     String jsonBody = """
         {
@@ -103,8 +108,9 @@ class EnrollmentStatusControllerTest {
     verify(service, times(1)).updateStatus(anyString(), any(EnrollmentStatus.class));
   }
 
+  // 本申込への昇格が実行できること
   @Test
-  void 本申込への昇格が実行できること() throws Exception {
+  void promoteToFormalEnrollment_whenCalled_thenServiceMethodIsExecuted() throws Exception {
     String studentCourseId = "1001";
     mockMvc.perform(put("/studentCourses/{studentCourseId}/enrollmentStatus/formal", studentCourseId))
         .andExpect(status().isOk());
@@ -112,8 +118,9 @@ class EnrollmentStatusControllerTest {
     verify(service, times(1)).promoteToFormalEnrollment(studentCourseId);
   }
 
+  // 申込状況で適切な値を入力した時に入力チェックに異常が発生しないこと
   @Test
-  void 申込状況で適切な値を入力した時に入力チェックに異常が発生しないこと() {
+  void validateEnrollmentStatus_whenValidInputGiven_thenNoViolationErrors() {
     EnrollmentStatus enrollmentStatus = new EnrollmentStatus();
     enrollmentStatus.setId("1");
     enrollmentStatus.setStudentCourseId("1");
@@ -124,8 +131,9 @@ class EnrollmentStatusControllerTest {
     assertThat(violations.size()).isEqualTo(0);
   }
 
+  // 申込状況でIDに数字以外を入力した時に入力チェックに掛かること
   @Test
-  void 申込状況でIDに数字以外を入力した時に入力チェックに掛かること() {
+  void validateEnrollmentStatus_whenNonNumericIdGiven_thenValidationFails() {
     EnrollmentStatus enrollmentStatus = new EnrollmentStatus();
     enrollmentStatus.setId("テストです。");
     enrollmentStatus.setStudentCourseId("テストです。");
@@ -134,11 +142,15 @@ class EnrollmentStatusControllerTest {
     Set<ConstraintViolation<EnrollmentStatus>> violations = validator.validate(enrollmentStatus);
 
     assertThat(violations.size()).isEqualTo(2);
-    assertThat(violations).extracting("message").contains("数字のみ入力するようにしてください");
+    assertThat(violations)
+        .extracting(ConstraintViolation::getPropertyPath)
+        .extracting(Object::toString)
+        .containsExactlyInAnyOrder("id", "studentCourseId");
   }
 
+  // 申込状況で値を空にしたときに入力チェックに掛かること
   @Test
-  void 申込状況で値を空にしたときに入力チェックに掛かること() {
+  void validateEnrollmentStatus_whenStatusIsEmpty_thenValidationFails() {
     EnrollmentStatus enrollmentStatus = new EnrollmentStatus();
     enrollmentStatus.setId("1");
     enrollmentStatus.setStudentCourseId("1");
@@ -147,6 +159,9 @@ class EnrollmentStatusControllerTest {
     Set<ConstraintViolation<EnrollmentStatus>> violations = validator.validate(enrollmentStatus);
 
     assertThat(violations.size()).isEqualTo(1);
-    assertThat(violations).extracting("message").contains("空白は許可されていません");
+    assertThat(violations)
+        .extracting(ConstraintViolation::getPropertyPath)
+        .extracting(Object::toString)
+        .contains("status");
   }
 }

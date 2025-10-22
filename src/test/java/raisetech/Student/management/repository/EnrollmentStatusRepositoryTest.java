@@ -14,29 +14,33 @@ class EnrollmentStatusRepositoryTest {
   @Autowired
   private EnrollmentStatusRepository sut;
 
+  // 申込状況の全件検索が行えること
   @Test
-  void 申込状況の全件検索が行えること() {
+  void searchAll_whenCalled_thenReturnAllEnrollmentStatuses() {
     List<EnrollmentStatus> statuses = sut.searchAll();
 
     assertThat(statuses.size()).isEqualTo(6);
   }
 
+  // IDによって申込状況の検索が行えること
   @Test
-  void IDによって申込状況の検索が行えること() {
+  void searchById_whenValidIdGiven_thenReturnExpectedStatus() {
     EnrollmentStatus status = sut.searchById("1");
 
     assertThat(status.getStatus()).isEqualTo("受講終了");
   }
 
+  // 受講生コース情報に紐づく申込状況の検索が行えること
   @Test
-  void 受講生コース情報に紐づく申込状況の検索が行えること() {
+  void searchByStudentCourseId_whenValidIdGiven_thenReturnExpectedStatus() {
     EnrollmentStatus status = sut.searchByStudentCourseId("3");
 
     assertThat(status.getStatus()).isEqualTo("受講中");
   }
 
+  // 申込状況の登録が行えること
   @Test
-  void 申込状況の登録が行えること() {
+  void registerStatus_whenValidDataGiven_thenStatusIsRegistered() {
     EnrollmentStatus enrollmentStatus = new EnrollmentStatus();
     enrollmentStatus.setStudentCourseId("1");
     enrollmentStatus.setStatus("仮申込");
@@ -46,8 +50,9 @@ class EnrollmentStatusRepositoryTest {
     assertThat(enrollmentStatus.getId()).isNotNull();
   }
 
+  // 申込状況の更新が行えること
   @Test
-  void 申込状況の更新が行えること() {
+  void updateStatus_whenExistingStatusUpdated_thenChangesAreSaved() {
     EnrollmentStatus enrollmentStatus = new EnrollmentStatus();
     enrollmentStatus.setStudentCourseId("1");
     enrollmentStatus.setStatus("仮申込");
