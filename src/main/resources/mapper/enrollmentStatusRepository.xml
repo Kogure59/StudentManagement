@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="raisetech.student.management.repository.EnrollmentStatusRepository">
+
+  <select id="searchAll" resultType="raisetech.student.management.data.EnrollmentStatus">
+    SELECT * FROM enrollment_status
+  </select>
+
+  <select id="searchById" resultType="raisetech.student.management.data.EnrollmentStatus">
+    SELECT * FROM enrollment_status WHERE id = #{id}
+  </select>
+
+  <select id="searchByStudentCourseId" resultType="raisetech.student.management.data.EnrollmentStatus">
+    SELECT * FROM enrollment_status WHERE student_course_id = #{studentCourseId}
+  </select>
+
+  <insert id="registerStatus" parameterType="raisetech.student.management.data.EnrollmentStatus" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO enrollment_status (student_course_id, status)
+    VALUES (#{studentCourseId}, #{status})
+  </insert>
+
+  <update id="updateStatus" parameterType="raisetech.student.management.data.EnrollmentStatus">
+    UPDATE enrollment_status SET status = #{status} WHERE student_course_id = #{studentCourseId}
+  </update>
+
+</mapper>
