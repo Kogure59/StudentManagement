@@ -1,4 +1,7 @@
-# RaiseTech Java フルコース
+# RaiseTech Javaコース
+# 受講生管理システム
+## ER図
+<img width="1891" height="667" alt="ER図" src="https://github.com/user-attachments/assets/981c5fc4-ee93-4cbb-80fc-1bdf4f1eed97" />
 
 ## カリキュラム
 | No. | タイトル | カテゴリ | 必須課題 |
