@@ -79,13 +79,13 @@ Spring Boot・MyBatis・MySQLを中心としたWebアプリケーション開発
 | 42 | Controllerのテスト解説とJUnitの機能解説 | 🟨中級編 | ☐ | ☑ https://github.com/Kogure59/StudentManagement/pull/20 |
 | 43 | RepositoryのテストとConverterのテスト解説 | 🟨中級編 | ☐ | ☑ https://github.com/Kogure59/StudentManagement/pull/22 |
 | 44 | 検索条件の追加と申込み状況機能の追加 | 🟨中級編 | ☑ | ☑ https://github.com/Kogure59/StudentManagement/pull/24 https://github.com/Kogure59/StudentManagement/pull/23 |
-| 45 | クラウドとは_AWSアカウントの作成 | 🟥上級編 | ☐ | ☐ |
-| 46 | EC2の構築 | 🟥上級編 | ☐ | ☐ |
-| 47 | RDSの構築 | 🟥上級編 | ☐ | ☐ |
-| 48 | AWS上でアプリケーションの動作確認 | 🟥上級編 | ☐ | ☐ |
-| 49 | ELBの構築 | 🟥上級編 | ☐ | ☐ |
-| 50 | 複雑なWebアプリケーション開発 | 🟥上級編 | ☐ | ☐ |
-| 51 | Dockerの解説とハンズオン | 🟥上級編 | ☐ | ☐ |
+| 45 | クラウドとは_AWSアカウントの作成 | 🟥上級編 | ☐ | ☑ |
+| 46 | EC2の構築 | 🟥上級編 | ☐ | ☑ |
+| 47 | RDSの構築 | 🟥上級編 | ☐ | ☑ |
+| 48 | AWS上でアプリケーションの動作確認 | 🟥上級編 | ☐ | ☑ |
+| 49 | ELBの構築 | 🟥上級編 | ☐ | ☑ |
+| 50 | 複雑なWebアプリケーション開発 | 🟥上級編 | ☐ | - |
+| 51 | Dockerの解説とハンズオン | 🟥上級編 | ☐ | ☑ |
 | 52 | デプロイの解説_注意点 | 🟥上級編 | ☐ | ☐ |
 | 53 | CI:CDの解説_GitHubActionsの設定 | 🟥上級編 | ☐ | ☐ |
 | 54 | CDの解説と設定 | 🟥上級編 | ☐ | ☐ |
