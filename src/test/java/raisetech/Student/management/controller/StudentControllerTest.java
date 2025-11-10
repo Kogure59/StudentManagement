@@ -1,5 +1,6 @@
 package raisetech.student.management.controller;
 
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -11,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import java.util.Objects;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -196,7 +198,10 @@ class StudentControllerTest {
     Set<ConstraintViolation<Student>> violations = validator.validate(student);
 
     assertThat(violations.size()).isEqualTo(6);
-    assertThat(violations).extracting("message").contains("空白は許可されていません");
+    assertThat(violations)
+        .extracting(ConstraintViolation::getPropertyPath)
+        .extracting(Object::toString)
+        .containsExactlyInAnyOrder("name", "kanaName", "nickname", "email", "area", "gender");
   }
 
 
@@ -238,6 +243,9 @@ class StudentControllerTest {
     Set<ConstraintViolation<StudentCourse>> violations = validator.validate(studentCourse);
 
     assertThat(violations.size()).isEqualTo(1);
-    assertThat(violations).extracting("message").contains("空白は許可されていません");
+    assertThat(violations)
+        .extracting(ConstraintViolation::getPropertyPath)
+        .extracting(Object::toString)
+        .contains("courseName");
   }
 }
