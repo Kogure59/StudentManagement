@@ -56,7 +56,7 @@ Spring Boot・MyBatis・MySQL を用いた **受講生管理システム** を�
 main ブランチに変更を push または PR がマージされると、EC2 上のアプリケーションが自動的に更新されます。
 
 ワークフロー定義ファイル：
-.github/workflows/JavaTest.yml
+[.github/workflows/JavaTest.yml](./.github/workflows/JavaTest.yml)
 
 【自動処理の流れ】  
 main ブランチへの push / PR で起動  
