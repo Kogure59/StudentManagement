@@ -77,7 +77,9 @@ EC2 側では systemd（StudentManagement.service）によりアプリケーシ�
 
 ---
 
-## カリキュラム
+<details>
+<summary>学習記録・カリキュラム</summary>
+
 | No. | タイトル | カテゴリ | 必須課題 | 課題完了 |
 | :-: | :------- | :------: | :-: | :-: |
 | 1 | Javaの歴史 意識してほしいこと_AI活用方法 | 🟦初級編 | ☐ | - |
@@ -135,3 +137,5 @@ EC2 側では systemd（StudentManagement.service）によりアプリケーシ�
 | 52 | デプロイの解説_注意点 | 🟥上級編 | ☐ | ☑ |
 | 53 | CI:CDの解説_GitHubActionsの設定 | 🟥上級編 | ☐ | ☑ |
 | 54 | CDの解説と設定 | 🟥上級編 | ☐ | ☑ |
+
+</details>
