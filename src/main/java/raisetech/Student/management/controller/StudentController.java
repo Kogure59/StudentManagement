@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 import java.util.List;
-import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -22,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.student.management.domain.StudentDetail;
+import raisetech.student.management.exception.NotFoundException;
 import raisetech.student.management.service.StudentService;
 
 /**
@@ -46,7 +46,7 @@ public class StudentController {
   /**
    * 受講生詳細の条件指定検索。条件指定を行わない場合は、全件検索を行う。
    *
-   * @return 受講生一覧(全件) (条件指定を行わない場合), @return 条件指定に該当する受講生詳細 (条件指定を行う場合)
+   * @return 条件指定を行わない場合は受講生一覧 (全件)、条件指定を行う場合は該当する受講生詳細
    */
   @Operation(summary = "受講生詳細の条件指定検索", description = "受講生詳細を条件指定検索します。条件指定を行わない場合には、受講生の一覧を検索します。")
   @GetMapping("/studentList")
@@ -113,11 +113,22 @@ public class StudentController {
     return ResponseEntity.ok("更新処理が成功しました。");
   }
 
+  /**
+   * 廃止されたAPIであることを通知するために例外をスローする。
+   *
+   * @return 使用されない (常に例外をスロー)
+   */
   @GetMapping("/exception")
-  public  ResponseEntity<String> throwException() throws NotFoundException {
+  public ResponseEntity<String> throwException() throws NotFoundException {
     throw new NotFoundException("このAPIは現在利用できません。古いURLとなっています。");
   }
 
+  /**
+   * {@link NotFoundException} をハンドリングし、400 Bad Request としてエラーメッセージを返却する。
+   *
+   * @param ex 発生した例外
+   * @return エラーメッセージを含むレスポンス
+   */
   @ExceptionHandler(NotFoundException.class)
   public ResponseEntity<String> handlerNotFoundException(NotFoundException ex) {
     return ResponseEntity.badRequest().body(ex.getMessage());

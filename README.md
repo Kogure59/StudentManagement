@@ -1,141 +1,147 @@
-# RaiseTech Javaコース
-## 実践概要
-### プロジェクト(StudentManagement) 
-Spring Boot・MyBatis・MySQL を用いた **受講生管理システム** を構築しました。  
-受講生情報(氏名・メールアドレス・地域など)、受講生に紐づくコース情報(コース名・受講開始日・受講終了日)、  
-および申込状況(仮申込・本申込・受講中など)を管理するアプリケーションです。  
-バックエンド開発の基本構造理解、データベース連携、テストコード実装、AWSによるクラウド環境でのデプロイまで、一貫した開発プロセスを経験しています。
+# 受講生管理システム
 
-### 使用技術
-- **バックエンド**：Spring Boot / MyBatis  
-- **データベース**：MySQL（RDS）  
-- **テスト**：JUnit5 / Mockito  
-- **設計**：ER図 / テーブル設計 / レイヤードアーキテクチャ  
-- **インフラ**：AWS（EC2 / RDS / ELB）、GitHub Actions（CI/CD）  
-- **構成管理**：Git / GitHub / Gradle  
+Spring Boot・MyBatis・MySQL を用いて開発した受講生管理システムです。  
+RaiseTech Java コースの課題として、受講生情報および受講コース情報を管理する Web アプリケーションを構築しました。  
+REST API の設計・実装から、JUnit5 / Mockito によるテスト、AWS へのデプロイ、GitHub Actions を用いた CI/CD まで一貫して取り組みました。
 
-### 実践内容
-#### 🟦 初級編
-- Java文法（基本型、分岐、繰り返し、例外処理）
-- StreamAPI / 正規表現
-- オブジェクト指向の理解
-- IntelliJの活用 / デバッグ手法
-- Git / GitHub の基本操作
+## 機能一覧
 
-#### 🟨 中級編
-- Webアプリケーションの仕組みの理解
-- Spring Boot プロジェクト構築とMVCモデルの習得
-- MyBatis を用いた CRUD 実装
-- テーブル設計・ER図の作成
-- Thymeleaf による画面描画
-- REST API化（Read / Create）
-- 入力チェック・例外処理の実装
-- レイヤードアーキテクチャに基づき、Controller / Service / Repository / Converter の各レイヤーに責務を分離
-- JUnit5 + Mockito によるテスト作成（Controller / Service / Repository）
-- 条件指定検索・申込状況機能の追加
+- **受講生管理**：受講生情報の登録・一覧検索（条件指定検索に対応）・更新・論理削除（更新 API を通じて `isDeleted` フラグを切り替え）
+- **コース管理**：受講生に紐づくコース情報の登録・全件検索・条件検索（コース名・受講期間による絞り込み）・更新
+- **申込状況管理**：コースの申込状況を「仮申込」として初期登録・更新・専用 API で「本申込」へ状態遷移
 
-#### 🟥 上級編（クラウド × 自動化）
-- AWSアカウント作成と IAM・料金管理の基礎理解
-- **EC2** によるアプリケーションサーバー構築
-- **RDS（MySQL）** を使用した本番環境データベースの構築
-- セキュリティグループ・キーペア・VPC などのネットワーク設計
-- EC2 上での Spring Boot アプリ実行
-- **ELB（ロードバランサー）** を使った冗長化環境の構築
-- Docker ハンズオン（コンテナ基礎）
-- デプロイの考え方・注意点
-- **GitHub Actions を用いた CI/CD パイプライン構築**  
-  - レポジトリへの push --> 自動テスト  
-  - Gradle による自動ビルド  
-  - scp ＋ systemd による EC2 への自動デプロイ  
-  - --> **main ブランチにマージすると EC2 のアプリが自動更新される状態を実現**
+## API 一覧
 
----
+springdoc-openapi による Swagger UI（`/swagger-ui/index.html`）でも同様の情報を確認できますが、REST API の全体像を一目で把握できるよう一覧化しています。
+
+### 受講生管理
+
+| Method | Path | 概要 | リクエスト | レスポンス |
+|---|---|---|---|---|
+| GET | `/studentList` | 受講生詳細の条件指定検索（条件未指定時は全件検索） | クエリパラメータ：name, kanaName, nickname, email, area, age, gender, remark, isDeleted, courseName, courseStartAt, courseEndAt（すべて任意） | `StudentDetail` の配列 |
+| GET | `/student/{id}` | 受講生詳細検索 | パスパラメータ：id | `StudentDetail` |
+| POST | `/registerStudent` | 受講生登録（コース情報を含む） | リクエストボディ：`StudentDetail` | 登録した `StudentDetail` |
+| PUT | `/updateStudent` | 受講生更新（コース情報を含む、`isDeleted` フラグの切り替え＝論理削除も同 API） | リクエストボディ：`StudentDetail` | 実行結果メッセージ |
+
+### 申込状況管理
+
+| Method | Path | 概要 | リクエスト | レスポンス |
+|---|---|---|---|---|
+| GET | `/enrollmentStatuses` | 申込状況一覧検索（全件） | なし | `EnrollmentStatus` の配列 |
+| GET | `/enrollmentStatuses/{id}` | ID による申込状況検索 | パスパラメータ：id | `EnrollmentStatus` |
+| GET | `/studentCourses/{studentCourseId}/enrollmentStatus` | 受講生コース ID による申込状況検索 | パスパラメータ：studentCourseId | `EnrollmentStatus` |
+| POST | `/studentCourses/{studentCourseId}/enrollmentStatus/initial` | 申込状況初期登録（仮申込） | パスパラメータ：studentCourseId | 登録した `EnrollmentStatus` |
+| PUT | `/studentCourses/{studentCourseId}/enrollmentStatus` | 申込状況更新 | パスパラメータ：studentCourseId、リクエストボディ：`EnrollmentStatus` | 実行結果メッセージ |
+| PUT | `/studentCourses/{studentCourseId}/enrollmentStatus/formal` | 本申込への昇格（仮申込 → 本申込） | パスパラメータ：studentCourseId | 更新後の `EnrollmentStatus` |
+
+### その他
+
+| Method | Path | 概要 | リクエスト | レスポンス |
+|---|---|---|---|---|
+| GET | `/exception` | `NotFoundException` によるエラーハンドリングの動作確認用エンドポイント | なし | 400 Bad Request + エラーメッセージ |
+
+## 使用技術
+
+- **バックエンド**：Spring Boot / MyBatis
+- **データベース**：MySQL
+- **テスト**：JUnit5 / Mockito
+- **インフラ**：AWS（EC2 / RDS / ALB）
+- **CI/CD**：GitHub Actions
+- **開発ツール**：Git / GitHub / Gradle / Claude Code（コードレビュー・ドキュメント整備支援）
+
+## システム構成
+
+学習当時の AWS 環境における構成は以下の通りです。
+
+
+- **VPC / サブネット構成**：ap-northeast-1a・1c の 2 つの AZ にまたがる VPC 作成時に作成された Public / Private サブネットを利用しています。実際にリソースを配置しているのは 1a のみで、1c は冗長化のために予約したのみで未使用です。
+- **ALB / インターネットゲートウェイ**：ユーザーからのリクエストはインターネットゲートウェイ経由で ALB に到達し、ALB はターゲットグループに登録された Public サブネット（1a）上の EC2 へルーティングします。
+- **GitHub Actions**：main ブランチへの push / PR マージをトリガーに、テスト実行・ビルド・EC2 へのデプロイを自動化しています（詳細は後述の CI/CD セクションを参照してください）。
+- **EC2**：Spring Boot アプリケーションを systemd 管理下で常駐稼働させています。
+- **RDS（MySQL）**：EC2 上のアプリケーションから MyBatis 経由で接続しています。
+
+※ 学習期間終了後、EC2 / RDS 環境は停止・削除済みです。上記は学習当時の構成を示しています。
+
+## ER図
+<img width="1887" height="581" alt="ER図" src="https://github.com/user-attachments/assets/f4f46cba-dfd9-4e8a-bcd8-f66edd131cd6" />
+
+## アーキテクチャ・設計
+
+- Controller → Service → Repository（MyBatis）→ mapper XML というレイヤードアーキテクチャで責務を分離しています。
+- Service 層に業務ロジックを集約し、Controller はリクエスト・レスポンスの制御に専念する構成としています。
+- Repository 層は `@Mapper` インターフェースのみで SQL を持たず、実際のクエリは `mapper/*.xml` に分離しています。
+- `StudentDetail`（`Student` + `StudentCourse` の集約 DTO）を `StudentConverter` が組み立て、API レスポンスとして返却しています。
+
+## 工夫した点
+
+### StudentConverter による集約設計
+`Student` と `StudentCourse` は SQL の JOIN ではなく、アプリケーション層の `StudentConverter.convertStudentDetails` で `studentId` をキーにメモリ上で結合し、API 向けの `StudentDetail` を組み立てています。
+
+### コース条件検索の実装
+`searchStudentCourseByCondition` は MyBatis の `<if>` タグによる動的 WHERE 句でコース名・受講期間による絞り込みを実現しています。`StudentService` 側では、受講生条件とコース条件を別々に検索した上で、該当する受講生 ID の集合で結果を絞り込む方式を採用しています。
+
+### 論理削除
+`Student.isDeleted` フラグで管理し、削除専用の API・SQL は持たず、通常の更新 API を通じてフラグを切り替える設計としました。
+データを物理削除せず保持することで、誤削除への対応や履歴管理を考慮しました。
+
+### 申込状況の状態遷移
+`EnrollmentStatus` は「仮申込」状態で初期登録する専用 API と、「本申込」へ昇格させる専用 API を分離しており、通常の更新処理とは独立した昇格フローを持ちます。
+
+## テスト
+
+JUnit5 / Mockito を用いて、Controller・Service・Repository・Converter の各レイヤーにテストを実装しています（受講生・申込状況の両リソースに対応）。
+
+- Service：Mockito による依存モック化
+- Controller：MockMvc を用いた API テスト
+- Repository：MyBatis を含む DB アクセステスト
+- Converter：集約ロジックの単体テスト
+
+## セットアップ手順
+
+### 前提
+- Java 21
+- MySQL（`StudentManagement` データベースを作成しておく必要があります。`src/main/resources` にはスキーマの自動初期化設定がないため、テーブルは事前に作成してください。）
+
+### 環境変数
+`application.properties` の DB 接続情報は環境変数から読み込みます。起動前にターミナルで以下を実行してください。
+
+```
+export DB_USERNAME="your_username"
+export DB_PASSWORD="your_password"
+```
+
+### 起動
+
+```
+./gradlew bootRun
+```
 
 ## CI/CD（GitHub Actions を用いた自動デプロイ）
-このプロジェクトでは、GitHub Actions を使用した EC2 への自動デプロイ（CD） を構築しています。
+
+このプロジェクトでは、GitHub Actions を使用した EC2 への自動デプロイ（CD）を構築しています。
 main ブランチに変更を push または PR がマージされると、EC2 上のアプリケーションが自動的に更新されます。
 
 ワークフロー定義ファイル：
 [.github/workflows/JavaTest.yml](./.github/workflows/JavaTest.yml)
 
-【自動処理の流れ】  
-main ブランチへの push / PR で起動  
---> JDK 21（Temurin）環境のセットアップ  
---> Gradle Wrapper によるテスト (./gradlew test) 実行  
---> Gradle によるアプリケーションビルド (./gradlew bootJar)  
---> 生成された JAR ファイルを EC2 へ SCP で転送  
---> EC2 に SSH 接続し、systemctl によるサービス再起動  
---> StudentManagement.service が稼働している場合は restart  
---> 稼働していない場合は start
+【自動処理の流れ】
+- main ブランチへの push / PR で起動
+- JDK 21（Temurin）環境のセットアップ
+- Gradle Wrapper によるテスト (./gradlew test) 実行
+- Gradle によるアプリケーションビルド (./gradlew bootJar)
+- 生成された JAR ファイルを EC2 へ SCP で転送
+- EC2 に SSH 接続し、systemctl によるサービス再起動
+- StudentManagement.service が稼働している場合は restart
+- 稼働していない場合は start
 
 EC2 側では systemd（StudentManagement.service）によりアプリケーションを常駐管理しています。
 
----
+※ 現在の実行状況について
+本リポジトリでは GitHub Actions による自動テスト・自動デプロイの設定を実装しています。  
+当時使用していた AWS（EC2 / RDS）環境は学習期間終了後に停止・削除しているため、現在はデプロイ先が存在せず CD ジョブは失敗しますが、設定自体は学習時に正常動作を確認済みです。
 
-## ER図
-<img width="1887" height="581" alt="ER図" src="https://github.com/user-attachments/assets/f4f46cba-dfd9-4e8a-bcd8-f66edd131cd6" />
+## 開発の経緯
 
----
-
-<details>
-<summary>学習記録・カリキュラム</summary>
-
-| No. | タイトル | カテゴリ | 必須課題 | 課題完了 |
-| :-: | :------- | :------: | :-: | :-: |
-| 1 | Javaの歴史 意識してほしいこと_AI活用方法 | 🟦初級編 | ☐ | - |
-| 2 | 開発環境構築 | 🟦初級編 | ☐ | ☑ |
-| 3 | HelloWorldの解説 | 🟦初級編 | ☐ | ☑ |
-| 4 | 変数と値の取り扱い 簡単な計算 | 🟦初級編 | ☐ | ☑ |
-| 5 | 基本型_標準API _分岐処理 | 🟦初級編 | ☐ | ☑ |
-| 6 | 繰り返し処理_配列_ListとMap_switch式 | 🟦初級編 | ☐ | ☑ |
-| 7 | StreamAPIとラムダ式 | 🟦初級編 | ☐ | ☑ |
-| 8 | 入出力処理と例外処理 | 🟦初級編 | ☐ | ☑ |
-| 9 | オブジェクト指向について | 🟦初級編 | ☐ | ☑ |
-| 10 | 正規表現 | 🟦初級編 | ☐ | ☑ |
-| 11 | Intellijの便利機能 | 🟦初級編 | ☐ | ☑ |
-| 12 | Javaの命名規則と学習方法 | 🟦初級編 | ☐ | ☑ |
-| 13 | デバッグの実践 | 🟦初級編 | ☐ | ☑ |
-| - | 初級理解度チェック | 🟦初級編 | ☑ | ☑ |
-| 14 | Webアプリの仕組み | 🟨中級編 | ☐ | - |
-| 15 | SpringとSpringBootの違い | 🟨中級編 | ☐ | ☑ |
-| 16 | バージョン管理とGitとGitHub | 🟨中級編 | ☑ | ☑ |
-| 17 | プロジェクトの構成管理_Gradle_Maven | 🟨中級編 | ☐ | ☑ https://github.com/Kogure59/StudentManagement/pull/1 |
-| 18 | DBを使わないWebアプリケーション構築 | 🟨中級編 | ☐ | ☑ https://github.com/Kogure59/StudentManagement/pull/2 |
-| 19 | DB_トランザクション_MySQL | 🟨中級編 | ☐ | ☑ |
-| 20 | JDBCとMyBatis | 🟨中級編 | ☐ | ☑ |
-| 21 | 実際に構築するWebアプリの解説とテーブル設計 | 🟨中級編 | ☐ | ☑ |
-| 22 | モデル設計_MVCとMVVM_DBマイグレーション | 🟨中級編 | ☐ | - |
-| 23 | MyBatisを使ってCRUDのRead処理を実装 | 🟨中級編 | ☑ | ☑ https://github.com/Kogure59/StudentManagement/pull/5 |
-| 24 | Read処理のServiceとController部分を実装 | 🟨中級編 | ☐ | ☑ https://github.com/Kogure59/StudentManagement/pull/6 |
-| 25 | Read処理のConverter部分実装 | 🟨中級編 | ☐ | ☑ https://github.com/Kogure59/StudentManagement/pull/7 |
-| 26 | タスクの見積もり方 | 🟨中級編 | ☐ | - |
-| 27 | Thymeleafを使ったReadの画面描画処理 | 🟨中級編 | ☐ | ☑ https://github.com/Kogure59/StudentManagement/pull/8 |
-| 28 | Thymeleafを使ったPOST処理 | 🟨中級編 | ☐ | ☑ |
-| 29 | 受講生情報登録処理の実装 | 🟨中級編 | ☐ | ☑ https://github.com/Kogure59/StudentManagement/pull/9 |
-| 30 | 受講生情報更新処理の実装 | 🟨中級編 | ☐ | ☑ https://github.com/Kogure59/StudentManagement/pull/10 |
-| 31 | 受講生情報削除処理の実装 | 🟨中級編 | ☐ | ☑ https://github.com/Kogure59/StudentManagement/pull/11 |
-| 32 | REST_APIの解説 | 🟨中級編 | ☐ | - |
-| 33 | Read処理のREST化とPostman実践 | 🟨中級編 | ☑ | ☑ https://github.com/Kogure59/StudentManagement/pull/12 |
-| 34 | Create処理のREST化とリファクタリング | 🟨中級編 | ☐ | ☑ https://github.com/Kogure59/StudentManagement/pull/13 |
-| 35 | 更新処理のリファクタリング_MapperXMLの導入_入力チェック | 🟨中級編 | ☐ | ☑ https://github.com/Kogure59/StudentManagement/pull/14 https://github.com/Kogure59/StudentManagement/pull/15 |
-| 36 | SpringBootでの例外処理 | 🟨中級編 | ☑ | ☑ https://github.com/Kogure59/StudentManagement/pull/16 |
-| 37 | 開発の流れと手法_開発プロセスのフレームワーク | 🟨中級編 | ☐ | - |
-| 38 | ドキュメントの必要性と作り方 | 🟨中級編 | ☐ | ☑ https://github.com/Kogure59/StudentManagement/pull/17 |
-| 39 | テストとテスト手法について | 🟨中級編 | ☐ | ☑ |
-| 40 | JUnitとAssertionとMockito_Serviceのテスト | 🟨中級編 | ☑ | ☑ https://github.com/Kogure59/StudentManagement/pull/18 |
-| 41 | Controllerのテストと入力チェックのテスト | 🟨中級編 | ☐ | ☑ https://github.com/Kogure59/StudentManagement/pull/19 |
-| 42 | Controllerのテスト解説とJUnitの機能解説 | 🟨中級編 | ☐ | ☑ https://github.com/Kogure59/StudentManagement/pull/20 |
-| 43 | RepositoryのテストとConverterのテスト解説 | 🟨中級編 | ☐ | ☑ https://github.com/Kogure59/StudentManagement/pull/22 |
-| 44 | 検索条件の追加と申込み状況機能の追加 | 🟨中級編 | ☑ | ☑ https://github.com/Kogure59/StudentManagement/pull/24 https://github.com/Kogure59/StudentManagement/pull/23 |
-| 45 | クラウドとは_AWSアカウントの作成 | 🟥上級編 | ☐ | ☑ |
-| 46 | EC2の構築 | 🟥上級編 | ☐ | ☑ |
-| 47 | RDSの構築 | 🟥上級編 | ☐ | ☑ |
-| 48 | AWS上でアプリケーションの動作確認 | 🟥上級編 | ☐ | ☑ |
-| 49 | ELBの構築 | 🟥上級編 | ☐ | ☑ |
-| 50 | 複雑なWebアプリケーション開発 | 🟥上級編 | ☐ | - |
-| 51 | Dockerの解説とハンズオン | 🟥上級編 | ☐ | ☑ |
-| 52 | デプロイの解説_注意点 | 🟥上級編 | ☐ | ☑ |
-| 53 | CI:CDの解説_GitHubActionsの設定 | 🟥上級編 | ☐ | ☑ |
-| 54 | CDの解説と設定 | 🟥上級編 | ☐ | ☑ |
-
-</details>
+本プロジェクトは当初 Thymeleaf を用いたサーバーサイドレンダリングの Web アプリケーションとして開発を始め、
+学習の進行に伴い REST API 化・Postman での動作検証を経て現在の構成に至りました。
+開発の詳細な過程は [curriculum.md](./curriculum.md) に Pull Request リンク付きでまとめています。

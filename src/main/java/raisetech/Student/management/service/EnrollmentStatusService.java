@@ -13,6 +13,12 @@ import raisetech.student.management.repository.EnrollmentStatusRepository;
 @Service
 public class EnrollmentStatusService {
 
+  /** 申込状況の初期状態を表す文字列。 */
+  private static final String STATUS_PROVISIONAL = "仮申込";
+
+  /** 本申込へ昇格した状態を表す文字列。 */
+  private static final String STATUS_FORMAL = "本申込";
+
   private EnrollmentStatusRepository repository;
 
   @Autowired
@@ -58,7 +64,7 @@ public class EnrollmentStatusService {
   public EnrollmentStatus registerInitialStatus(String studentCourseId) {
     EnrollmentStatus status = new EnrollmentStatus();
     status.setStudentCourseId(studentCourseId);
-    status.setStatus("仮申込");
+    status.setStatus(STATUS_PROVISIONAL);
     repository.registerStatus(status);
     return status;
   }
@@ -82,7 +88,7 @@ public class EnrollmentStatusService {
   public EnrollmentStatus promoteToFormalEnrollment(String studentCourseId) {
     EnrollmentStatus status = repository.searchByStudentCourseId(studentCourseId);
     if (status != null) {
-      status.setStatus("本申込");
+      status.setStatus(STATUS_FORMAL);
       repository.updateStatus(status);
     }
     return status;
