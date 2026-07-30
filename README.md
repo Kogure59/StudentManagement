@@ -25,14 +25,17 @@ springdoc-openapi による Swagger UI（`/swagger-ui/index.html`）でも同様
 
 ### 申込状況管理
 
+※ `/studentCourses/{studentCourseId}` 配下の API は、Path 列では共通部分を省略し、
+`...` を `/studentCourses/{studentCourseId}` として表記しています。
+
 | Method | Path | 概要 | リクエスト | レスポンス |
 |---|---|---|---|---|
 | GET | `/enrollmentStatuses` | 申込状況一覧検索（全件） | なし | `EnrollmentStatus` の配列 |
 | GET | `/enrollmentStatuses/{id}` | ID による申込状況検索 | パスパラメータ：`id` | `EnrollmentStatus` |
-| GET | `/studentCourses/{studentCourseId}/enrollmentStatus` | 受講生コース ID による申込状況検索 | パスパラメータ：`studentCourseId` | `EnrollmentStatus` |
-| POST | `/studentCourses/{studentCourseId}/enrollmentStatus/initial` | 申込状況初期登録（仮申込） | パスパラメータ：`studentCourseId` | 登録した `EnrollmentStatus` |
-| PUT | `/studentCourses/{studentCourseId}/enrollmentStatus` | 申込状況更新 | パスパラメータ：`studentCourseId`、リクエストボディ：`EnrollmentStatus` | 実行結果メッセージ |
-| PUT | `/studentCourses/{studentCourseId}/enrollmentStatus/formal` | 本申込への昇格（仮申込 → 本申込） | パスパラメータ：`studentCourseId` | 更新後の `EnrollmentStatus` |
+| GET | `.../enrollmentStatus` | 受講生コース ID による申込状況検索 | パスパラメータ：`studentCourseId` | `EnrollmentStatus` |
+| POST | `.../enrollmentStatus/initial` | 申込状況初期登録（仮申込） | パスパラメータ：`studentCourseId` | 登録した `EnrollmentStatus` |
+| PUT | `.../enrollmentStatus` | 申込状況更新 | パスパラメータ：`studentCourseId`、リクエストボディ：`EnrollmentStatus` | 実行結果メッセージ |
+| PUT | `.../enrollmentStatus/formal` | 本申込への昇格（仮申込 → 本申込） | パスパラメータ：`studentCourseId` | 更新後の `EnrollmentStatus` |
 
 ### その他
 
@@ -50,9 +53,8 @@ springdoc-openapi による Swagger UI（`/swagger-ui/index.html`）でも同様
 - **開発ツール**：Git / GitHub / Gradle / Claude Code（コードレビュー・ドキュメント整備支援）
 
 ## システム構成
-
+<img width="1078" height="731" alt="システム構成図 " src="https://github.com/user-attachments/assets/809040aa-69f0-400a-b39b-872d3e129a68" />
 学習当時の AWS 環境における構成は以下の通りです。
-
 
 - **VPC / サブネット構成**：ap-northeast-1a・1c の 2 つの AZ にまたがる VPC 作成時に作成された Public / Private サブネットを利用しています。実際にリソースを配置しているのは 1a のみで、1c は冗長化のために予約したのみで未使用です。
 - **ALB / インターネットゲートウェイ**：ユーザーからのリクエストはインターネットゲートウェイ経由で ALB に到達し、ALB はターゲットグループに登録された Public サブネット（1a）上の EC2 へルーティングします。
