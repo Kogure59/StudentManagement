@@ -18,8 +18,8 @@ springdoc-openapi による Swagger UI（`/swagger-ui/index.html`）でも同様
 
 | Method | Path | 概要 | リクエスト | レスポンス |
 |---|---|---|---|---|
-| GET | `/studentList` | 受講生詳細の条件指定検索（条件未指定時は全件検索） | クエリパラメータ：name, kanaName, nickname, email, area, age, gender, remark, isDeleted, courseName, courseStartAt, courseEndAt（すべて任意） | `StudentDetail` の配列 |
-| GET | `/student/{id}` | 受講生詳細検索 | パスパラメータ：id | `StudentDetail` |
+| GET | `/studentList` | 受講生詳細の条件指定検索（条件未指定時は全件検索） | クエリパラメータ：`name`, `kanaName`, `nickname`, `email`, `area`, `age`, `gender`, `remark`, `isDeleted`, `courseName`, `courseStartAt`, `courseEndAt`（すべて任意） | `StudentDetail` の配列 |
+| GET | `/student/{id}` | 受講生詳細検索 | パスパラメータ：`id` | `StudentDetail` |
 | POST | `/registerStudent` | 受講生登録（コース情報を含む） | リクエストボディ：`StudentDetail` | 登録した `StudentDetail` |
 | PUT | `/updateStudent` | 受講生更新（コース情報を含む、`isDeleted` フラグの切り替え＝論理削除も同 API） | リクエストボディ：`StudentDetail` | 実行結果メッセージ |
 
@@ -28,11 +28,11 @@ springdoc-openapi による Swagger UI（`/swagger-ui/index.html`）でも同様
 | Method | Path | 概要 | リクエスト | レスポンス |
 |---|---|---|---|---|
 | GET | `/enrollmentStatuses` | 申込状況一覧検索（全件） | なし | `EnrollmentStatus` の配列 |
-| GET | `/enrollmentStatuses/{id}` | ID による申込状況検索 | パスパラメータ：id | `EnrollmentStatus` |
-| GET | `/studentCourses/{studentCourseId}/enrollmentStatus` | 受講生コース ID による申込状況検索 | パスパラメータ：studentCourseId | `EnrollmentStatus` |
-| POST | `/studentCourses/{studentCourseId}/enrollmentStatus/initial` | 申込状況初期登録（仮申込） | パスパラメータ：studentCourseId | 登録した `EnrollmentStatus` |
-| PUT | `/studentCourses/{studentCourseId}/enrollmentStatus` | 申込状況更新 | パスパラメータ：studentCourseId、リクエストボディ：`EnrollmentStatus` | 実行結果メッセージ |
-| PUT | `/studentCourses/{studentCourseId}/enrollmentStatus/formal` | 本申込への昇格（仮申込 → 本申込） | パスパラメータ：studentCourseId | 更新後の `EnrollmentStatus` |
+| GET | `/enrollmentStatuses/{id}` | ID による申込状況検索 | パスパラメータ：`id` | `EnrollmentStatus` |
+| GET | `/studentCourses/{studentCourseId}/enrollmentStatus` | 受講生コース ID による申込状況検索 | パスパラメータ：`studentCourseId` | `EnrollmentStatus` |
+| POST | `/studentCourses/{studentCourseId}/enrollmentStatus/initial` | 申込状況初期登録（仮申込） | パスパラメータ：`studentCourseId` | 登録した `EnrollmentStatus` |
+| PUT | `/studentCourses/{studentCourseId}/enrollmentStatus` | 申込状況更新 | パスパラメータ：`studentCourseId`、リクエストボディ：`EnrollmentStatus` | 実行結果メッセージ |
+| PUT | `/studentCourses/{studentCourseId}/enrollmentStatus/formal` | 本申込への昇格（仮申込 → 本申込） | パスパラメータ：`studentCourseId` | 更新後の `EnrollmentStatus` |
 
 ### その他
 
@@ -127,14 +127,14 @@ main ブランチに変更を push または PR がマージされると、EC2 �
 【自動処理の流れ】
 - main ブランチへの push / PR で起動
 - JDK 21（Temurin）環境のセットアップ
-- Gradle Wrapper によるテスト (./gradlew test) 実行
-- Gradle によるアプリケーションビルド (./gradlew bootJar)
+- Gradle Wrapper によるテスト（`./gradlew test`）実行
+- Gradle によるアプリケーションビルド（`./gradlew bootJar`）
 - 生成された JAR ファイルを EC2 へ SCP で転送
-- EC2 に SSH 接続し、systemctl によるサービス再起動
-- StudentManagement.service が稼働している場合は restart
-- 稼働していない場合は start
+- EC2 に SSH 接続し、`systemctl` によるサービス再起動
+- `StudentManagement.service` が稼働している場合は `restart`
+- 稼働していない場合は `start`
 
-EC2 側では systemd（StudentManagement.service）によりアプリケーションを常駐管理しています。
+EC2 側では systemd（`StudentManagement.service`）によりアプリケーションを常駐管理しています。
 
 ※ 現在の実行状況について
 本リポジトリでは GitHub Actions による自動テスト・自動デプロイの設定を実装しています。  
